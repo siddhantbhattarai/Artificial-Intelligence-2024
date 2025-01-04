@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --background-color: #f8fafc;
+            --chat-bg: #ffffff;
+            --user-message-bg: #eff6ff;
+            --bot-message-bg: #f1f5f9;
+            --text-color: #1e293b;
+        }
+
+        body {
+            background-color: var(--background-color);
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .chat-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background-color: var(--chat-bg);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1.25rem;
+            position: relative;
+        }
+
+        .chat-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .chat-body {
+            padding: 1.5rem;
+            height: 500px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .chat-message {
+            margin-bottom: 1.25rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 1rem;
+            border-radius: 1rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            position: relative;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        }
+
+        .user-message {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .user-bubble {
+            background-color: var(--user-message-bg);
+            color: var(--text-color);
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .bot-message {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .bot-bubble {
+            background-color: var(--bot-message-bg);
+            color: var(--text-color);
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .chat-footer {
+            padding: 1.25rem;
+            border-top: 1px solid #e2e8f0;
+            background-color: var(--chat-bg);
+        }
+
+        .chat-input-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .chat-input {
+            border-radius: 9999px;
+            padding: 0.75rem 1.25rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .send-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 9999px;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .send-button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+
+        .view-logs-button {
+            background-color: #64748b;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .view-logs-button:hover {
+            background-color: #475569;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background-color: #94a3b8;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* Scrollbar Styling */
+        .chat-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .chat-body::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .chat-body::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h3>
+                    <i class="fas fa-robot"></i>
+                    AI Assistant
+                </h3>
+            </div>
+            <div class="chat-body" id="chat-window">
+                <div id="chat-box">
+                    <!-- Chat messages will appear here -->
+                </div>
+                <div class="typing-indicator" id="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="chat-footer">
+                <div class="chat-input-group">
+                    <input type="text" id="user-input" class="form-control chat-input" 
+                           placeholder="Type your message..." aria-label="User input">
+                    <button class="btn send-button" id="send-btn">
+                        <span>Send</span>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <button class="btn view-logs-button" id="view-logs-btn">
+                    <i class="fas fa-history"></i>
+                    View Chat History
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function scrollToBottom() {
+                const chatWindow = $('#chat-window');
+                chatWindow.scrollTop(chatWindow[0].scrollHeight);
+            }
+
+            function showTypingIndicator() {
+                $('#typing-indicator').show();
+                scrollToBottom();
+            }
+
+            function hideTypingIndicator() {
+                $('#typing-indicator').hide();
+            }
+
+            function addMessage(message, isUser = false) {
+                const messageType = isUser ? 'user' : 'bot';
+                const sender = isUser ? 'You' : 'AI Assistant';
+                const messageHTML = `
+                    <div class="chat-message ${messageType}-message">
+                        <div class="message-bubble ${messageType}-bubble">
+                            <strong>${sender}:</strong> ${message}
+                        </div>
+                    </div>
+                `;
+                $('#chat-box').append(messageHTML);
+                scrollToBottom();
+            }
+
+            $('#send-btn').on('click', function () {
+                const userInput = $('#user-input').val().trim();
+                if (userInput) {
+                    addMessage(userInput, true);
+                    $('#user-input').val('').focus();
+                    showTypingIndicator();
+
+                    $.ajax({
+                        url: '/get_response',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ message: userInput }),
+                        success: function (data) {
+                            hideTypingIndicator();
+                            addMessage(data.response);
+                        },
+                        error: function () {
+                            hideTypingIndicator();
+                            addMessage('Oops! Something went wrong. Please try again later.');
+                        }
+                    });
+                }
+            });
+
+            $('#user-input').keypress(function (event) {
+                if (event.which === 13) {
+                    $('#send-btn').click();
+                }
+            });
+
+            $('#view-logs-btn').on('click', function () {
+                window.location.href = '/logs';
+            });
+
+            // Add welcome message
+            setTimeout(() => {
+                addMessage("Hello! How can I assist you today?");
+            }, 500);
+        });
+    </script>
+</body>
+</html>
