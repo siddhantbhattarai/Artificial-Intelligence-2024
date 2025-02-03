@@ -70,16 +70,16 @@ Coins used: [50, 20, 20, 2, 1]
 
 **Solution:**
 ```python
-# Test cases
-test_cases = [
-    (127, "127p test"),
-    (249, "249p test"),
-    (67, "67p test")
-]
-
-for amount, description in test_cases:
-    print(f"\nTesting {description}")
-    coin_change(coins, amount)
+# Exercise 4 - Testing with different amounts
+def test_different_amounts():
+    coins = [1, 2, 5, 10, 20, 50, 100, 200]
+    
+    print("\nTesting different amounts:")
+    test_amounts = [127, 249, 67]
+    
+    for amount in test_amounts:
+        print(f"\nTesting for {amount}p:")
+        coin_change(coins, amount)
 ```
 
 Results:
