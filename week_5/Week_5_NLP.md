@@ -91,17 +91,49 @@
 ### **Exercise 9: Repeat exercises 5-9 with 3 different sentences.**
 - Choose 3 different sentences and repeat the preprocessing steps (lowercase, remove punctuation, tokenize, and remove stop words). For example:
   ```python
-  # Example 1
-  text1 = "Natural Language Processing is a fascinating field of study."
-  # Repeat steps 5-8 for text1
+  import nltk
+  nltk.download('punkt')
+  nltk.download('stopwords')
 
-  # Example 2
-  text2 = "Machine learning algorithms are used to analyze data."
-  # Repeat steps 5-8 for text2
+  from nltk.corpus import stopwords
+  from nltk.tokenize import word_tokenize
+  import string
 
-  # Example 3
-  text3 = "Text summarization helps in reducing long documents."
-  # Repeat steps 5-8 for text3
+  def preprocess_text(text):
+    print("\nOriginal Text:")
+    print(text)
+
+    # Convert to lowercase
+    text = text.lower()
+    print("\nLowercase Text:")
+    print(text)
+
+    # Remove punctuation
+    text = text.translate(str.maketrans('', '', string.punctuation))
+    print("\nText without Punctuation:")
+    print(text)
+
+    # Tokenization
+    tokens = word_tokenize(text)
+    print("\nTokens:")
+    print(tokens)
+
+    # Removing stopwords
+    stop_words = set(stopwords.words('english'))
+    filtered_tokens = [word for word in tokens if word not in stop_words]
+
+    print("\nFiltered Tokens (Without Stopwords):")
+    print(filtered_tokens)
+
+  # Define 3 different sentences
+  sentence1 = "Artificial intelligence is transforming the world rapidly!"
+  sentence2 = "Cybersecurity helps in protecting sensitive information from hackers."
+  sentence3 = "Data science involves statistics, programming, and domain knowledge."
+
+  # Apply preprocessing to each sentence
+  for sentence in [sentence1, sentence2, sentence3]:
+    preprocess_text(sentence)
+
   ```
 
 ---
