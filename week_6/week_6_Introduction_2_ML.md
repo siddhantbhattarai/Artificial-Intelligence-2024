@@ -1,4 +1,3 @@
-```markdown
 # CETM313 - Workshop Week 06-4 Solutions
 
 This document provides solutions and explanations for the exercises and questions from the **CETM313 - Workshop Week 06-4** on Machine Learning and Linear Regression.
